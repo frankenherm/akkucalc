@@ -1,6 +1,24 @@
 ﻿@page "/"
+@using AkkuCalc.Services
+
+@inject NumberPartitioningService NumberPartitioningService;
+
 <PageTitle>Akku Partitioner</PageTitle>
 
 <h1>Akku Partitioner</h1>
 
+<NumberOverview />
 <GridInput />
+
+@if (NumberPartitioningService.IsCalculated)
+{
+    <Result />
+}
+
+@code {
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        NumberPartitioningService.CalculatedChanged += (o, args) => this.StateHasChanged();
+    }
+}

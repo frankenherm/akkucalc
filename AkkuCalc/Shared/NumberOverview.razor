@@ -1,0 +1,17 @@
+﻿@using AkkuCalc.Services
+
+@inject NumberPartitioningService NumberPartitioningService
+
+@for(int i = 0; i < NumberPartitioningService.Numbers.Count(); i++)
+{
+    var local = i;
+    <input id="name" class="form-control my-3" @bind-value="NumberPartitioningService.Numbers[local]" readonly />
+}
+
+@code {
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        NumberPartitioningService.NumberAdded += (o, args) => this.StateHasChanged();
+    }
+}

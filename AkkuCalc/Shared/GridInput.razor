@@ -6,12 +6,6 @@
 
 <h3>GridInput</h3>
 
-@for(int i = 0; i < NumberPartitioningService.Numbers.Count(); i++)
-{
-    var local = i; // internal lambda closure. meh bug.
-    <input id="name" class="form-control my-3" @bind-value="NumberPartitioningService.Numbers[local]" readonly />
-}
-
 <EditForm class="vstack" Model="Capacity" OnValidSubmit="SubmitAsync">
     <DataAnnotationsValidator></DataAnnotationsValidator>
     <label class="form-label" for="input">weitere Zelle hinzufügen: </label>
@@ -29,21 +23,16 @@
     </div>
 </div>
 
-@if (NumberPartitioningService.IsCalculated)
-{
-    <Result />
-}
-
 
 @code {
     private InputNumber<float> inputElement;
 
     private CellCapacity Capacity { get; set; } = new CellCapacity();
-    private async Task SubmitAsync()
+    private Task SubmitAsync()
     {
-        this.NumberPartitioningService.Numbers.Add(Capacity.Value);
+        this.NumberPartitioningService.Add(Capacity.Value);
         Capacity = new AkkuCalc.Model.CellCapacity();
-
+        return Task.CompletedTask;
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -61,7 +50,7 @@
         await JSRuntime.InvokeVoidAsync("selectText", "input-element-primary");
     }
 
-    private async Task Calculate()
+    private void Calculate()
     {
         this.NumberPartitioningService.DoPartition();
     }
