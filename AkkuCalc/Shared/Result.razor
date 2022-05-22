@@ -1,0 +1,34 @@
+﻿@using AkkuCalc.Services
+@inject NumberPartitioningService NumberPartitioningService
+
+<h3>result</h3>
+
+<table>
+    <thead>
+        <tr>
+            @for(int i = 0; i < MaxRowCount; i++)
+            {
+                var local = i;
+                <th scope="col">P@(local)</th>
+            }
+        </tr>
+    </thead>
+    <tbody>
+        @for(int i = 0; i < MaxRowCount; i++)
+        {
+            var local = i;
+            <tr>
+                <th scope="row">S@(local)</th>
+                @foreach (var subset in NumberPartitioningService.Subsets)
+                {
+                    var localSubSet = subset;
+                    <td>@(local < localSubSet.Count() ? $"{localSubSet.ElementAt(local)}" : "")</td>
+                }
+            </tr>
+        }
+    </tbody>
+</table>
+
+@code {
+    private int MaxRowCount => NumberPartitioningService.Subsets.Max(subset => subset.Count());
+}

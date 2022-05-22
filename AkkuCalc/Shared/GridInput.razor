@@ -1,0 +1,68 @@
+﻿@using AkkuCalc.Model
+@using AkkuCalc.Services
+
+@inject NumberPartitioningService NumberPartitioningService
+@inject IJSRuntime JSRuntime
+
+<h3>GridInput</h3>
+
+@for(int i = 0; i < NumberPartitioningService.Numbers.Count(); i++)
+{
+    var local = i; // internal lambda closure. meh bug.
+    <input id="name" class="form-control my-3" @bind-value="NumberPartitioningService.Numbers[local]" readonly />
+}
+
+<EditForm class="vstack" Model="Capacity" OnValidSubmit="SubmitAsync">
+    <DataAnnotationsValidator></DataAnnotationsValidator>
+    <label class="form-label" for="input">weitere Zelle hinzufügen: </label>
+    <InputNumber id="input-element-primary" class="form-control" 
+        @bind-Value="Capacity.Value" 
+        @ref="inputElement"></InputNumber>
+</EditForm>
+
+<div class="row">
+    <div class="col">
+        <input id="subset-numbers" class="form-control my-3" @bind-value="NumberPartitioningService.NumberOfSubsets" />
+    </div>
+    <div class="col oi-vertical-align-center">
+        <button class="btn btn-primary" @onclick="Calculate">Calculate</button>
+    </div>
+</div>
+
+@if (NumberPartitioningService.IsCalculated)
+{
+    <Result />
+}
+
+
+@code {
+    private InputNumber<float> inputElement;
+
+    private CellCapacity Capacity { get; set; } = new CellCapacity();
+    private async Task SubmitAsync()
+    {
+        this.NumberPartitioningService.Numbers.Add(Capacity.Value);
+        Capacity = new AkkuCalc.Model.CellCapacity();
+
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (inputElement.Element.HasValue)
+        {
+            await inputElement.Element.Value.FocusAsync(true);
+            await Select();
+        }
+        await base.OnAfterRenderAsync(firstRender);
+    }
+
+    private async Task Select()
+    {
+        await JSRuntime.InvokeVoidAsync("selectText", "input-element-primary");
+    }
+
+    private async Task Calculate()
+    {
+        this.NumberPartitioningService.DoPartition();
+    }
+}
