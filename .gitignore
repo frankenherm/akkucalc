@@ -348,3 +348,4 @@ MigrationBackup/
 
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
+/AkkuCalc/Properties/ServiceDependencies/akku-calc - Web Deploy/profile.arm.json

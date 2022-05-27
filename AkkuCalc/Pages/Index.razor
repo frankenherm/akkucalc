@@ -5,14 +5,19 @@
 
 <PageTitle>Akku Partitioner</PageTitle>
 
-<h1>Akku Partitioner</h1>
-
-<NumberOverview />
-<GridInput />
+<div class="noprint">
+    <h1>Akku Partitioner</h1>
+    
+    <NumberOverview />
+    <GridInput />
+</div>
 
 @if (NumberPartitioningService.IsCalculated)
 {
-    <Result />
+    <hr class="noprint" />
+    <div class="mt-4">
+        <Result />  
+    </div>
 }
 
 @code {

@@ -4,22 +4,28 @@
 @inject NumberPartitioningService NumberPartitioningService
 @inject IJSRuntime JSRuntime
 
-<h3>GridInput</h3>
 
-<EditForm class="vstack" Model="Capacity" OnValidSubmit="SubmitAsync">
-    <DataAnnotationsValidator></DataAnnotationsValidator>
-    <label class="form-label" for="input">weitere Zelle hinzufügen: </label>
-    <InputNumber id="input-element-primary" class="form-control" 
-        @bind-Value="Capacity.Value" 
-        @ref="inputElement"></InputNumber>
-</EditForm>
-
-<div class="row">
-    <div class="col">
-        <input id="subset-numbers" class="form-control my-3" @bind-value="NumberPartitioningService.NumberOfSubsets" />
+<div class="card">
+    <div class="card-body">
+        
+        <EditForm class="vstack" Model="Capacity" OnValidSubmit="SubmitAsync">
+        <DataAnnotationsValidator></DataAnnotationsValidator>
+        <label class="form-label" for="input">weitere Zelle hinzufügen: </label>
+        <InputNumber id="input-element-primary" class="form-control" 
+            @bind-Value="Capacity.Value" 
+            @ref="inputElement"></InputNumber>
+        </EditForm>
+        <div class="row my-3">
+            <div class="col-6">
+                <label class="form-label" for="subset-numbers" style="line-height: 2.2rem">Anzahl der Sets</label>
+            </div>
+            <div class="col-6">
+                <input type="number" id="subset-numbers" class="form-control" @bind-value="NumberPartitioningService.NumberOfSubsets" />
+            </div>
+        </div>
     </div>
-    <div class="col oi-vertical-align-center">
-        <button class="btn btn-primary" @onclick="Calculate">Calculate</button>
+    <div class="card-footer">
+        <button class="btn btn-primary float-end" @onclick="Calculate">Calculate</button>
     </div>
 </div>
 
@@ -50,8 +56,14 @@
         await JSRuntime.InvokeVoidAsync("selectText", "input-element-primary");
     }
 
-    private void Calculate()
+
+    private async Task ScrollToResults()
+    {
+        await JSRuntime.InvokeVoidAsync("scrollToId", "result-table");
+    }
+    private async void Calculate()
     {
         this.NumberPartitioningService.DoPartition();
+        await this.ScrollToResults();
     }
 }

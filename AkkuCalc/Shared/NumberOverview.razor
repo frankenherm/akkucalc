@@ -2,16 +2,32 @@
 
 @inject NumberPartitioningService NumberPartitioningService
 
+<div class="numbercontainer">
 @for(int i = 0; i < NumberPartitioningService.Numbers.Count(); i++)
 {
     var local = i;
-    <input id="name" class="form-control my-3" @bind-value="NumberPartitioningService.Numbers[local]" readonly />
+    <div class="row form-group my-3">
+        <div class="col-11">
+            <input id="name" class="form-control" @bind-value="NumberPartitioningService.Numbers[local]" readonly />
+        </div>
+        <NavLink class="col-1" href="" style="line-height: 2rem" @onclick="e => Remove(local)">
+            <span class="oi oi-x" aria-hidden="true"></span>
+        </NavLink>
+    </div>
 }
+</div>
+
 
 @code {
     protected override void OnInitialized()
     {
         base.OnInitialized();
-        NumberPartitioningService.NumberAdded += (o, args) => this.StateHasChanged();
+        NumberPartitioningService.NumberChanged += (o, args) => this.StateHasChanged();
     }
+
+    private void Remove(int index)
+    {
+        NumberPartitioningService.RemoveAt(index);
+    }
+
 }

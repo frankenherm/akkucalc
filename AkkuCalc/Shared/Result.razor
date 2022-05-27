@@ -1,15 +1,17 @@
 ﻿@using AkkuCalc.Services
 @inject NumberPartitioningService NumberPartitioningService
+@inject IJSRuntime JSRuntime
 
-<h3>result</h3>
+<h2>Ergebnis</h2>
 
-<table>
+<table class="table table-stripe" id="result-table">
     <thead>
         <tr>
-            @for(int i = 0; i < MaxRowCount; i++)
+            <th></th>
+            @for(int i = 0; i < NumberPartitioningService.Subsets.Count(); i++)
             {
                 var local = i;
-                <th scope="col">P@(local)</th>
+                <th scope="col">S@(local)</th>
             }
         </tr>
     </thead>
@@ -18,7 +20,7 @@
         {
             var local = i;
             <tr>
-                <th scope="row">S@(local)</th>
+                <th scope="row">P@(local)</th>
                 @foreach (var subset in NumberPartitioningService.Subsets)
                 {
                     var localSubSet = subset;
@@ -26,9 +28,36 @@
                 }
             </tr>
         }
+        <tr>
+            <th scope="row">Summe</th>
+            @foreach (var subset in NumberPartitioningService.Subsets)
+            {
+                var localSubSet = subset;
+                <th scope="col">@(Math.Round(localSubSet.Sum(), 3))</th>
+            }
+        </tr>
+        <tr>
+            <td colspan="@(NumberPartitioningService.Subsets.Count())" >Summe Kapazität</td>
+            <td>@(Math.Round(NumberPartitioningService.Subsets.Sum(subset => subset.Sum()), 3))</td>
+        </tr>
     </tbody>
 </table>
 
 @code {
     private int MaxRowCount => NumberPartitioningService.Subsets.Max(subset => subset.Count());
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        NumberPartitioningService.CalculatedChanged += (o, args) => this.StateHasChanged();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JSRuntime.InvokeVoidAsync("scrollToId", "result-table");
+        }
+        await base.OnAfterRenderAsync(firstRender);
+    }
 }

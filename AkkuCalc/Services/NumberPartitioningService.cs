@@ -5,16 +5,22 @@ namespace AkkuCalc.Services
     { 
         public IList<float> Numbers { get; set; } = new List<float>();
 
-        public ushort NumberOfSubsets { get; set; } = 1;
+        public ushort NumberOfSubsets { get; set; } = 2;
 
         public IList<List<float>> Subsets { get; set; } = new List<List<float>>();
 
         public bool IsCalculated => Subsets.Any();
 
-        public async void Add(float number)
+        public void RemoveAt(int index)
+        {
+            this.Numbers.RemoveAt(index);
+            this.OnNumberChanged();
+        }
+
+        public void Add(float number)
         {
             this.Numbers.Add(number);
-            this.OnNumberAdded();
+            this.OnNumberChanged();
         }
 
         public event EventHandler CalculatedChanged;
@@ -24,11 +30,11 @@ namespace AkkuCalc.Services
             this.CalculatedChanged?.Invoke(this, EventArgs.Empty);
         }
 
-        public event EventHandler NumberAdded;
+        public event EventHandler? NumberChanged;
 
-        public void OnNumberAdded()
+        public void OnNumberChanged()
         {
-            this.NumberAdded?.Invoke(this, EventArgs.Empty);
+            this.NumberChanged?.Invoke(this, EventArgs.Empty);
         }
 
         public void DoPartition()
